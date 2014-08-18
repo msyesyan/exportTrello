@@ -1,0 +1,31 @@
+body{
+  background: #23719F;
+}
+
+#lists{
+  margin-left: 78px;
+}
+
+.list {
+  width: 200px;
+  height: 60px;
+  background: #fff;
+  float: left;
+  border-radius: 5px;
+  box-shadow: 3px;
+  border: 1px solid #eee;
+  line-height: 60px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  padding-left: 20px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+#output {
+  clear: both;
+  background: #eee;
+  padding: 20px;
+}

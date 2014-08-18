@@ -1,117 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <script type="text/javascript" src="https://api.trello.com/1/client.js?key=9115435cc98b67a65c3a6dcff606cb09"></script>
-  <style type="text/css" media="screen">
-    body{
-      background: #23719F;
-    }
+<div id="lists">
+</div>
+<div id="output"></div>
 
-    #lists{
-      margin-left: 78px;
-    }
+<script type="text/javascript" src="https://api.trello.com/1/client.js?key=9115435cc98b67a65c3a6dcff606cb09"></script>
+<script type="text/coffeescript">
 
-    .list {
-      width: 200px;
-      height: 60px;
-      background: #fff;
-      float: left;
-      border-radius: 5px;
-      box-shadow: 3px;
-      border: 1px solid #eee;
-      line-height: 60px;
-      margin-right: 20px;
-      margin-bottom: 20px;
-      padding-left: 20px;
-    }
+  Trello.authorize({ type: "popup", name: "autoTrello" }) if (!Trello.authorized())
 
-    .list:hover {
-      cursor: pointer;
-    }
-
-    #output {
-      clear: both;
-      background: #eee;
-      padding: 20px;
-    }
-  </style>
-</head>
-<body>
-  <div id="lists">
-  </div>
-  <div id="output"></div>
-</body>
-
-<script type="text/javascript">
-  if (!Trello.authorized()) {
-    Trello.authorize({
-      type: "popup",
-      name: "autoTrello"
-    });
-  }
-
-  var boardId = "KDFzTG2T";
-  var projectsTitles = {
-    "hh": "健康到家",
-    "zbh": "闸北医疗",
-    "ngb": "智慧闵行",
+  boardId = "KDFzTG2T"
+  projectsTitles =
+    "hh": "健康到家"
+    "zbh": "闸北医疗"
+    "ngb": "智慧闵行"
     "cam": "智能摄像头"
-  };
 
-  var initList = function() {
-    $("#list").empty();
-    var board = Trello.boards.get(boardId, { lists: "open" }, function(board) {
-      var lists = board.lists;
-      for(var i = 0; i < lists.length; i++) {
-        var list = lists[i];
-        $("<div/>", {
-          "class": "list",
-          "data-id": list.id,
-          "text": list.name
-        })
-        .appendTo("#lists");
-      }
+  initList = ->
+    $("#list").empty()
+    Trello.boards.get boardId, lists: "open", (board) ->
+      for list in board.lists
+        $("<div/>",
+          class: "list"
+          "data-id": list.id
+          text: list.name
+        ).appendTo "#lists"
 
-      $(".list").click(function(){
-        $("#output").empty();
-        var self = $(this);
-        var list = Trello.lists.get(self.data("id"), {cards: "open"}, function(list) {
-          var cards = list.cards;
-          var projects = {};
-          for(var i = 0; i < cards.length; i++) {
-            var card = cards[i];
+      $(".list").click ->
+        $("#output").empty()
+        Trello.lists.get($(this).data("id"), cards: "open", (list) ->
+          projects = {}
 
-            cardProject = card.name.match(/\{(.*)}/)[1];
-            if (!projects[cardProject]) {
-              projects[cardProject] = [];
-            }
-            projects[cardProject].push($.trim(card.name.replace(/\{.*\}|\(.*\)|\[.*\]/g, "")));
-          }
+          for card in list.cards
+            projectKeyTitle = card.name.match(/\{(.*)}/)[1]
+            projects[projectKeyTitle] = []  unless projects[projectKeyTitle]
+            projects[projectKeyTitle].push $.trim(card.name.replace(/\{.*\}|\(.*\)|\[.*\]/g, ""))
 
-          for (var project in projects) {
-            console.log(project);
-            $("<h2 />", {
-              "text": projectsTitles[project] || project
-            })
-            .appendTo('#output');
-            for(var i = 0; i < projects[project].length; i++) {
-              $("<div/>", {
-                "text": projects[project][i]
-              })
-              .appendTo("#output");
-            }
-          }
-        });
-      });
-    }, function(error) {
-      alert(error);
-    });
-  };
+          for project of projects
+            $("<h2 />",
+              text: projectsTitles[project] or project
+            ).appendTo "#output"
 
+            for cardContent in projects[project]
+              $("<div/>",
+                text: cardContent
+              ).appendTo "#output"
+        )
+    , (error) ->
+      alert error
 
-  Trello.authorize({
-    interactive: false,
+  Trello.authorize
+    interactive: false
     success: initList()
-  });
+
 </script>
 </html>
