@@ -3,29 +3,43 @@ body{
 }
 
 #lists{
-  margin-left: 78px;
+  margin: 40px 0px 0px 78px;
+  padding: 10px 20px;
+  width: 220px;
+  height: 600px;
+  overflow-y:scroll;
+  background: #e3e3e3;
+  border-radius: 5px;
 }
 
 .list {
   width: 200px;
   height: 60px;
   background: #fff;
-  float: left;
-  border-radius: 5px;
-  box-shadow: 3px;
-  border: 1px solid #eee;
+  border-radius: 3px;
+  border: 1px solid #cccccc;
   line-height: 60px;
-  margin-right: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   padding-left: 20px;
+
+  &.active {
+    background: #969696;
+  }
 
   &:hover {
     cursor: pointer;
   }
 }
 
+
 #output {
-  clear: both;
+  position: fixed;
+  top: 40px;
+  left: 380px;
+  width: 880px;
+  border-radius: 5px;
   background: #eee;
-  padding: 20px;
+  padding: 10px 20px;
+  height: 600px;
+  overflow-y:scroll;
 }

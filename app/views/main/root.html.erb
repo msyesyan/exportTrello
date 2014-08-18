@@ -2,21 +2,18 @@
 </div>
 <div id="output"></div>
 
-<script type="text/javascript" src="https://api.trello.com/1/client.js?key=9115435cc98b67a65c3a6dcff606cb09"></script>
 <script type="text/coffeescript">
+$.getScript "https://api.trello.com/1/client.js?key=" + settings.key, ->
+  Trello.authorize({ type: "popup", name: settings.applicationName }) if (!Trello.authorized())
 
-  Trello.authorize({ type: "popup", name: "autoTrello" }) if (!Trello.authorized())
-
-  boardId = "KDFzTG2T"
-  projectsTitles =
-    "hh": "健康到家"
-    "zbh": "闸北医疗"
-    "ngb": "智慧闵行"
-    "cam": "智能摄像头"
+  boardId = settings.boardId
+  params = { key: settings.key }
 
   initList = ->
     $("#list").empty()
-    Trello.boards.get boardId, lists: "open", (board) ->
+    Trello.boards.get boardId, $.extend(params, {lists: "open"}), (board) ->
+      $("<h2/>").html("Lists of " + board.name).appendTo('#lists')
+
       for list in board.lists
         $("<div/>",
           class: "list"
@@ -25,7 +22,8 @@
         ).appendTo "#lists"
 
       $(".list").click ->
-        $("#output").empty()
+        $("#output").html("loading....")
+        $(this).addClass("active").siblings().removeClass("active")
         Trello.lists.get($(this).data("id"), cards: "open", (list) ->
           projects = {}
 
@@ -34,9 +32,10 @@
             projects[projectKeyTitle] = []  unless projects[projectKeyTitle]
             projects[projectKeyTitle].push $.trim(card.name.replace(/\{.*\}|\(.*\)|\[.*\]/g, ""))
 
+          $("#output").empty()
           for project of projects
             $("<h2 />",
-              text: projectsTitles[project] or project
+              text: settings.i18n[project] or project
             ).appendTo "#output"
 
             for cardContent in projects[project]
@@ -50,6 +49,5 @@
   Trello.authorize
     interactive: false
     success: initList()
-
 </script>
 </html>
