@@ -39,8 +39,9 @@ $.getScript "https://api.trello.com/1/client.js?key=" + settings.key, ->
             ).appendTo "#output"
 
             for cardContent in projects[project]
+              content = if cardContent.match(/解决|问题|修复|无效|错误/g) then "[解决] " + cardContent else "[完成] " + cardContent
               $("<div/>",
-                text: cardContent
+                text: content
               ).appendTo "#output"
         )
     , (error) ->
