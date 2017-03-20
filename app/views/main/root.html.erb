@@ -2,16 +2,26 @@
 </div>
 <div id="output"></div>
 
+<script type="text/javascript" src="https://api.trello.com/1/client.js?key=9115435cc98b67a65c3a6dcff606cb09"></script>
+
 <script type="text/coffeescript">
-$.getScript "https://api.trello.com/1/client.js?key=" + settings.key, ->
-  Trello.authorize({ type: "popup", name: settings.applicationName }) if (!Trello.authorized())
+  settings =
+    applicationName: "ExportTrelloToWeekPapers"
+    key: "9115435cc98b67a65c3a6dcff606cb09"
+    boardId: "KDFzTG2T"
+    i18n:
+      hh: "健康到家"
+      zbh: "闸北医疗"
+      ngb: "智慧闵行"
+      cam: "智能摄像头"
+      zgav: "张江视听"
+      hxl: "沪杏图书馆"
 
   boardId = settings.boardId
-  params = { key: settings.key }
 
   initList = ->
     $("#list").empty()
-    Trello.boards.get boardId, $.extend(params, {lists: "open"}), (board) ->
+    Trello.boards.get boardId, { lists: "open" }, (board) ->
       $("<h2/>").html("Lists of " + board.name).appendTo('#lists')
 
       for list in board.lists
@@ -48,7 +58,12 @@ $.getScript "https://api.trello.com/1/client.js?key=" + settings.key, ->
       alert error
 
   Trello.authorize
-    interactive: false
-    success: initList()
+    interactive: false,
+    success: initList,
+    error: ->
+      Trello.authorize
+        type: "popup",
+        name: settings.applicationName
+        success: initList
 </script>
 </html>
